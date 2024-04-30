@@ -2,18 +2,27 @@ plugins {
     kotlin("kapt")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("maven-publish")
 }
 
 android {
+
+    publishing {
+        singleVariant("release"){
+            withJavadocJar()
+            withSourcesJar()
+        }
+    }
+
     namespace = "com.rwmendes.modulodelogin"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.rwmendes.modulodelogin"
+        //applicationId = "com.rwmendes.modulodelogin"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        //targetSdk = 34
+        //versionCode = 1
+        //versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -60,4 +69,19 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+}
+
+publishing{
+    publications{
+        register<MavenPublication>(name = "release") {
+            groupId = "com.github.rwmendes"
+            artifactId = "modulo-de-login"
+            version = "0.0.1"
+
+            afterEvaluate {
+                from(components["release"])
+            }
+        }
+
+    }
 }
