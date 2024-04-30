@@ -12,8 +12,8 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.rwmendes.modulodelogin.databinding.ActivityLoginBinding
 import com.rwmendes.modulodelogin.R
+import com.rwmendes.modulodelogin.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
 
@@ -23,79 +23,66 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Inflar o layout da Activity usando View Binding
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Setup dos elementos de UI a partir do binding
-        val username = binding.username
-        val password = binding.password
-        val login = binding.login
-        val loading = binding.loading
+        val usernameEditText = binding.username
+        val passwordEditText = binding.password
+        val loginButton = binding.login
+        val loadingProgressBar = binding.loading
 
-        // Inicialização do ViewModel com a Factory
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory(applicationContext))
             .get(LoginViewModel::class.java)
 
-        // Observadores para o estado do formulário de login
-        loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
-            val loginState = it ?: return@Observer
-
-            login.isEnabled = loginState.isDataValid
+        loginViewModel.loginFormState.observe(this@LoginActivity, Observer { loginState ->
+            loginState ?: return@Observer
+            loginButton.isEnabled = loginState.isDataValid
 
             if (loginState.usernameError != null) {
-                username.error = getString(loginState.usernameError)
+                usernameEditText.error = getString(loginState.usernameError)
             }
             if (loginState.passwordError != null) {
-                password.error = getString(loginState.passwordError)
+                passwordEditText.error = getString(loginState.passwordError)
             }
         })
 
-        // Observadores para o resultado do login
-        loginViewModel.loginResult.observe(this@LoginActivity, Observer {
-            val loginResult = it ?: return@Observer
+        loginViewModel.loginResult.observe(this@LoginActivity, Observer { loginResult ->
+            loginResult ?: return@Observer
+            loadingProgressBar.visibility = View.GONE
 
-            loading.visibility = View.GONE
-            if (loginResult.error != null) {
-                showLoginFailed(loginResult.error)
-            }
-            if (loginResult.success != null) {
-                updateUiWithUser(loginResult.success)
-                setResult(Activity.RESULT_OK)
-
-                // Finaliza a LoginActivity após o login bem-sucedido
-                finish()
+            when (loginResult) {
+                is LoginResult.Success -> {
+                    updateUiWithUser(loginResult.userView)
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                }
+                is LoginResult.Error -> {
+                    showLoginFailed(loginResult.errorType)
+                }
             }
         })
 
-        // Listeners para mudanças de texto e ações de teclado
-        username.afterTextChanged {
-            loginViewModel.loginDataChanged(
-                username.text.toString(),
-                password.text.toString()
-            )
+        usernameEditText.afterTextChanged {
+            loginViewModel.loginDataChanged(usernameEditText.text.toString(), passwordEditText.text.toString())
         }
 
-        password.apply {
+        passwordEditText.apply {
             afterTextChanged {
-                loginViewModel.loginDataChanged(
-                    username.text.toString(),
-                    password.text.toString()
-                )
+                loginViewModel.loginDataChanged(usernameEditText.text.toString(), it.toString())
             }
 
             setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    loading.visibility = View.VISIBLE
-                    loginViewModel.login(username.text.toString(), password.text.toString())
+                    loadingProgressBar.visibility = View.VISIBLE
+                    loginViewModel.login(usernameEditText.text.toString(), passwordEditText.text.toString())
                 }
                 false
             }
         }
 
-        login.setOnClickListener {
-            loading.visibility = View.VISIBLE
-            loginViewModel.login(username.text.toString(), password.text.toString())
+        loginButton.setOnClickListener {
+            loadingProgressBar.visibility = View.VISIBLE
+            loginViewModel.login(usernameEditText.text.toString(), passwordEditText.text.toString())
         }
     }
 
@@ -106,16 +93,16 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
-        Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, getString(errorString), Toast.LENGTH_SHORT).show()
     }
 
     /**
      * Extension function to simplify setting an afterTextChanged action to EditText components.
      */
     fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-        this.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(editable: Editable?) {
-                afterTextChanged.invoke(editable.toString())
+        addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {
+                afterTextChanged.invoke(s.toString())
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}

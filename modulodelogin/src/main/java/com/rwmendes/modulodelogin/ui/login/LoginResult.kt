@@ -3,7 +3,7 @@ package com.rwmendes.modulodelogin.ui.login
 /**
  * Authentication result : success (user details) or error message.
  */
-data class LoginResult (
-     val success:LoggedInUserView? = null,
-     val error:Int? = null
-)
+sealed class LoginResult {
+     data class Success(val userView: LoggedInUserView): LoginResult()
+     data class Error(val errorType: Int): LoginResult()
+}

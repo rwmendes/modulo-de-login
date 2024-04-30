@@ -10,6 +10,11 @@ class LoginDataSource(context: Context) {
     private val userDao = AppDatabase.getDatabase(context).userDao()
     private var currentUser: LoggedInUser? = null
 
+    // Método para verificar se o usuário existe
+    suspend fun checkUserExists(username: String): Boolean {
+        return userDao.countUserByUsername(username) > 0
+    }
+
     suspend fun login(username: String, password: String): Result<LoggedInUser> {
         try {
             val user = userDao.getUser(username, password)

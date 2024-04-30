@@ -9,4 +9,7 @@
     <string name="invalid_username">Não é um nome de usuário válido</string>
     <string name="invalid_password"> A senha deve ter mais do que 5 caracteres</string>
     <string name="login_failed">"O seu login falhou"</string>
+    <string name="invalid_credentials">Credenciais inválidas</string>
+    <string name="user_not_found">Usuário não encontrado</string>
+    <string name="network_error">Erro de rede</string>
 </resources>

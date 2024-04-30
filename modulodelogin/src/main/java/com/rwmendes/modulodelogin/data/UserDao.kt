@@ -11,6 +11,9 @@ interface UserDao {
     @Query("SELECT * FROM users WHERE username = :username AND password = :password LIMIT 1")
     suspend fun getUser(username: String, password: String): User?
 
+    @Query("SELECT COUNT(username) FROM users WHERE username = :username")
+    suspend fun countUserByUsername(username: String): Int
+
     // Método para limpar/deletar o usuário
     @Query("DELETE FROM users WHERE username = :username")
     suspend fun deleteUser(username: String)

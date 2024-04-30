@@ -12,11 +12,11 @@ import com.rwmendes.modulodelogin.data.LoginRepository
  */
 
 
-class LoginViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
+class LoginViewModelFactory(private val applicationContext: Context) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
-            val loginDataSource = LoginDataSource(context)
+            val loginDataSource = LoginDataSource(applicationContext)
             val loginRepository = LoginRepository(loginDataSource)
             @Suppress("UNCHECKED_CAST")
             return LoginViewModel(loginRepository) as T
