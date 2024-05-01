@@ -1,6 +1,6 @@
 plugins {
     kotlin("kapt")
-    id("com.android.application")
+    id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("maven-publish")
 }
@@ -76,7 +76,7 @@ publishing{
         register<MavenPublication>(name = "release") {
             groupId = "com.github.rwmendes"
             artifactId = "modulo-de-login"
-            version = "0.0.4"
+            version = "0.0.5"
 
             afterEvaluate {
                 from(components["release"])
