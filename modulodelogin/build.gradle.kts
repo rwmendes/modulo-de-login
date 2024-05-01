@@ -76,7 +76,7 @@ publishing{
         register<MavenPublication>(name = "release") {
             groupId = "com.github.rwmendes"
             artifactId = "modulo-de-login"
-            version = "0.0.3"
+            version = "0.0.4"
 
             afterEvaluate {
                 from(components["release"])
