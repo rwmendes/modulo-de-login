@@ -6,6 +6,7 @@
     <string name="action_sign_in">Entre ou registre-se</string>
     <string name="action_sign_in_short">Entrar</string>
     <string name="welcome">"Bem-vindo!"</string>
+    <string name="password_info">"A senha a ser fornecida/armazenada é uma senha local, deste app, nada tem a ver com a senha real do seu e-mail."</string>
     <string name="invalid_username">Não é um nome de usuário válido</string>
     <string name="invalid_password"> A senha deve ter mais do que 5 caracteres</string>
     <string name="login_failed">"O seu login falhou"</string>

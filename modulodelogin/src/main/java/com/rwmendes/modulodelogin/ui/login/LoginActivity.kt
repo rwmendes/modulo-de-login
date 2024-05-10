@@ -33,6 +33,9 @@ class LoginActivity : AppCompatActivity() {
         val loginButton = binding.login
         val loadingProgressBar = binding.loading
 
+        // Coloca foco no campo de nome de usuário inicialmente
+        usernameEditText.requestFocus()
+
         // Inicialize o ViewModel usando ViewModelFactory
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory(applicationContext))
             .get(LoginViewModel::class.java)
@@ -57,13 +60,11 @@ class LoginActivity : AppCompatActivity() {
 
             when (loginResult) {
                 is LoginResult.Success -> {
-                    // Quando o login for bem-sucedido, define o resultado para OK e finaliza a atividade
                     updateUiWithUser(loginResult.userView)
                     setResult(Activity.RESULT_OK)
                     finish()
                 }
                 is LoginResult.Error -> {
-                    // Exibe uma mensagem de erro adequada ao tipo de erro
                     showLoginFailed(loginResult.errorType)
                 }
             }
@@ -95,21 +96,16 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // Função para atualizar a interface com os detalhes do usuário logado
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome)
         val displayName = model.displayName
         Toast.makeText(applicationContext, "$welcome $displayName", Toast.LENGTH_LONG).show()
     }
 
-    // Exibe a mensagem de erro ao usuário
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, getString(errorString), Toast.LENGTH_SHORT).show()
     }
 
-    /**
-     * Função de extensão para simplificar a ação `afterTextChanged` em componentes `EditText`.
-     */
     fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
         addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
